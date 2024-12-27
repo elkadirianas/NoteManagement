@@ -11,10 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/Dashboard/admin")
@@ -27,7 +24,7 @@ public class AdminController {
     public String showAdminDashboard(Model model) {
         int userId =  (int) session.getAttribute("userId");
         model.addAttribute("userId", userId);
-        var users = userrepo.findAll(Sort.by(Sort.Direction.DESC,"id"));
+        var users = userrepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
         model.addAttribute("users",users);
         return "Dashboard/admin/index";
     }
@@ -57,6 +54,59 @@ public class AdminController {
         user.setPassword(userDto.getPassword());
         user.setRole(userDto.getRole());
         userrepo.save(user);
+        return "redirect:/Dashboard/admin";
+    }
+
+    @GetMapping("/edit-user")
+    public String editUser(Model model, @RequestParam int id){
+        User user = userrepo.findById(id).orElse(null);
+        if(user==null){
+            return "redirect:/Dashboard/admin";
+        }
+        UserDto userDto = new UserDto();
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
+        userDto.setRole(user.getRole());
+        model.addAttribute("userDto",userDto);
+        model.addAttribute("user",user);
+
+        return "redirect:/Dashboard/admin/edituser";
+    }
+    @PostMapping("/edit-user")
+    public String editUser(Model model,
+                             @RequestParam int id,
+                             @Valid @ModelAttribute UserDto userDto,
+                             BindingResult result){
+        User user = userrepo.findById(id).orElse(null);
+        if(user==null){
+            return "redirect:/Dashboard/admin";
+        }
+        model.addAttribute("user",user);
+        if(result.hasErrors()){
+            return "redirect:/Dashboard/admin/edit";
+        }
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        user.setRole(userDto.getRole());
+
+        try{
+            userrepo.save(user);
+        }
+        catch (Exception ex){
+            result.addError(
+                    new FieldError("userDto","username",userDto.getUsername(),false,null
+                            ,null,"username already used"));
+            return "redirect:/Dashboard/admin/edit";
+        }
+
+        return "redirect:/Dashboard/admin";
+    }
+    @GetMapping("/delete")
+    public String deleteUser(@RequestParam int id){
+        User user = userrepo.findById(id).orElse(null);
+        if(user!=null){
+            userrepo.delete(user);
+        }
         return "redirect:/Dashboard/admin";
     }
 }

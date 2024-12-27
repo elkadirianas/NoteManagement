@@ -64,11 +64,11 @@
       <td th:text="${user.role}"></td>
       <td style="white-space: nowrap">
         <a class="btn btn-succes btn-sm"
-           th:href="@{/clients/edit(id=${user.id})}">
+           th:href="@{/Dashboard/admin/edit-user(id=${user.id})}">
           Edit
         </a>
         <a class="btn btn-danger btn-sm"
-           th:href="@{/clients/delete(id=${user.id})}"
+           th:href="@{/Dashboard/admin/delete(id=${user.id})}"
            onclick="return confirm('Are you sure')">
           Delete
         </a>

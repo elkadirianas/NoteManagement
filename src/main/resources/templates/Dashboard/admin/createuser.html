@@ -33,10 +33,13 @@
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Role</label>
                     <div class="col-sm-8">
-                        <input class="form-control" th:field="${userDto.role}">
+                        <select class="form-select" th:field="${userDto.role}">
+                            <option value="admin" >Admin</option>
+                            <option value="prof" >Professor</option>
+                        </select>
                         <p th:if="${#fields.hasErrors('role')}"
                            th:errorclass="text-danger"
-                           th:errors="${clientDto.role}"></p>
+                           th:errors="${userDto.role}"></p>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -48,6 +51,7 @@
                             <a class="btn btn-outline-primary" href="/Dashboard/admin/">Cancel</a>
                         </div>
                     </div>
+                </div>
             </form>
         </div>
     </div>
