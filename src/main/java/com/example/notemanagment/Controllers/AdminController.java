@@ -57,50 +57,52 @@ public class AdminController {
         return "redirect:/Dashboard/admin";
     }
 
-    @GetMapping("/edit-user")
-    public String editUser(Model model, @RequestParam int id){
+    @GetMapping("/edit")
+    public String editUser(Model model, @RequestParam int id) {
         User user = userrepo.findById(id).orElse(null);
-        if(user==null){
+        if (user == null) {
             return "redirect:/Dashboard/admin";
         }
         UserDto userDto = new UserDto();
         userDto.setUsername(user.getUsername());
         userDto.setPassword(user.getPassword());
         userDto.setRole(user.getRole());
-        model.addAttribute("userDto",userDto);
-        model.addAttribute("user",user);
-
-        return "redirect:/Dashboard/admin/edituser";
+        model.addAttribute("userDto", userDto);
+        model.addAttribute("user", user); // Pass the user ID to the model for form submission
+        return "Dashboard/admin/edit"; // Return the template name
     }
-    @PostMapping("/edit-user")
-    public String editUser(Model model,
-                             @RequestParam int id,
-                             @Valid @ModelAttribute UserDto userDto,
-                             BindingResult result){
+
+    @PostMapping("/edit")
+    public String editUser(
+            @RequestParam int id,
+            @Valid @ModelAttribute UserDto userDto,
+            BindingResult result,
+            Model model) {
         User user = userrepo.findById(id).orElse(null);
-        if(user==null){
+        if (user == null) {
             return "redirect:/Dashboard/admin";
         }
-        model.addAttribute("user",user);
-        if(result.hasErrors()){
-            return "redirect:/Dashboard/admin/edit";
+        model.addAttribute("userId", id); // Keep the ID for reuse in the form
+
+        if (result.hasErrors()) {
+            return "Dashboard/admin/edit"; // Return to the edit page with errors
         }
+
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
         user.setRole(userDto.getRole());
 
-        try{
+        try {
             userrepo.save(user);
-        }
-        catch (Exception ex){
-            result.addError(
-                    new FieldError("userDto","username",userDto.getUsername(),false,null
-                            ,null,"username already used"));
-            return "redirect:/Dashboard/admin/edit";
+        } catch (Exception ex) {
+            result.addError(new FieldError(
+                    "userDto", "username", userDto.getUsername(), false, null, null, "Username already used"));
+            return "Dashboard/admin/edit"; // Return to the edit page with error
         }
 
         return "redirect:/Dashboard/admin";
     }
+
     @GetMapping("/delete")
     public String deleteUser(@RequestParam int id){
         User user = userrepo.findById(id).orElse(null);

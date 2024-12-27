@@ -17,10 +17,10 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/Dashboard/admin">Home</a>
+            <a class="nav-link active" aria-current="page" href="/Dashboard/admin">Users</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Professors</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Pricing</a>
@@ -64,7 +64,7 @@
       <td th:text="${user.role}"></td>
       <td style="white-space: nowrap">
         <a class="btn btn-succes btn-sm"
-           th:href="@{/Dashboard/admin/edit-user(id=${user.id})}">
+           th:href="@{/Dashboard/admin/edit(id=${user.id})}">
           Edit
         </a>
         <a class="btn btn-danger btn-sm"
