@@ -20,7 +20,7 @@
             <a class="nav-link active" aria-current="page" href="/Dashboard/admin">Users</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Professors</a>
+            <a class="nav-link" href="/Dashboard/admin/ManageProfs">Professors</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Pricing</a>
@@ -71,6 +71,11 @@
            th:href="@{/Dashboard/admin/delete(id=${user.id})}"
            onclick="return confirm('Are you sure')">
           Delete
+        </a>
+        <a class="btn btn-info btn-sm"
+           th:if="${user.role == 'prof'}"
+           th:href="@{/Dashboard/admin/AddProf(id=${user.id})}">
+          Add Prof
         </a>
       </td>
 
