@@ -2,6 +2,8 @@ package com.example.notemanagment.Models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "modules")
 public class Module {
@@ -15,9 +17,13 @@ public class Module {
     @Column(unique = true, nullable = false)
     private String code;
 
-    @ManyToOne
-    @JoinColumn(name = "field_id", nullable = false)
-    private Field field;
+    @ManyToMany
+    @JoinTable(
+            name = "module_field",
+            joinColumns = @JoinColumn(name = "module_id"),
+            inverseJoinColumns = @JoinColumn(name = "field_id")
+    )
+    private List<Field> fields;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

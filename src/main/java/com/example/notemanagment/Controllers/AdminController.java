@@ -1,9 +1,7 @@
 package com.example.notemanagment.Controllers;
 
-import com.example.notemanagment.Models.Professor;
-import com.example.notemanagment.Models.ProfessorDto;
-import com.example.notemanagment.Models.User;
-import com.example.notemanagment.Models.UserDto;
+import com.example.notemanagment.Models.*;
+import com.example.notemanagment.Repository.FieldRepo;
 import com.example.notemanagment.Repository.ProfRepo;
 import com.example.notemanagment.Repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +23,8 @@ public class AdminController {
     private UserRepo userrepo ;
     @Autowired
     private ProfRepo profRepo;
+    @Autowired
+    private FieldRepo fieldRepo;
     @GetMapping({"","/"})
     public String showAdminDashboard(Model model) {
         int userId =  (int) session.getAttribute("userId");
@@ -179,5 +179,61 @@ public class AdminController {
             profRepo.delete(prof);
         }
         return "redirect:/Dashboard/admin/ManageProfs";
+    }
+    @GetMapping({"/Managefields"})
+    public String ShowFiedls(Model model) {
+//        int userId =  (int) session.getAttribute("userId");
+//        model.addAttribute("userId", userId);
+        var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
+        model.addAttribute("fields",fields);
+        return "Dashboard/admin/Managefields";
+    }
+
+
+    @GetMapping({"/createfield"})
+    public String createField(Model model){
+        FieldDto fieldDto = new FieldDto();
+        model.addAttribute("fieldDto",fieldDto);
+        return "Dashboard/admin/createfield";
+    }
+    @PostMapping("/createfield")
+    public String createClient(@Valid @ModelAttribute FieldDto fieldDto, BindingResult result){
+        if(userrepo.findByUsername(fieldDto.getName())!=null){
+            result.addError(
+                    new FieldError("fieldDto","name",fieldDto.getName(),false,null,null,"name is already used ")
+            );
+        }
+        if(result.hasErrors()){
+            return "Dashboard/admin/createfield";
+        }
+        Field field = new Field();
+        field.setName(fieldDto.getName());
+        fieldRepo.save(field);
+        return "redirect:/Dashboard/admin/Managefields";
+    }
+    @GetMapping("/deletefield")
+    public String deletefield(@RequestParam int id){
+        Field field = fieldRepo.findById(id).orElse(null);
+        if(field!=null){
+            fieldRepo.delete(field);
+        }
+        return "redirect:/Dashboard/admin/Managefields";
+    }
+    @GetMapping({"/Managemodules"})
+    public String ShowModules(Model model) {
+//        int userId =  (int) session.getAttribute("userId");
+//        model.addAttribute("userId", userId);
+        var users = userrepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
+        model.addAttribute("users",users);
+        return "Dashboard/admin/Managemodules";
+    }
+    @GetMapping({"/createModule"})
+    public String createModule(Model model){
+        ModuleDto moduleDto = new ModuleDto();
+
+        model.addAttribute("moduleDto",moduleDto);
+        var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
+        model.addAttribute("fields",fields);
+        return "Dashboard/admin/createModule";
     }
 }

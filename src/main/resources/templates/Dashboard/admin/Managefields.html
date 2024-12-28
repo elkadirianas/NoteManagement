@@ -23,10 +23,7 @@
             <a class="nav-link" href="/Dashboard/admin/ManageProfs">Professors</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/Dashboard/admin/Managefields">Fields</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/Dashboard/admin/Managemodules">Modules</a>
+            <a class="nav-link" href="#">Pricing</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -50,35 +47,24 @@
 
 </div>
 <div class="container my-3">
-  <h1 class="text-center mb-3">Users list</h1>
-  <a class="btn btn-primary" href="/Dashboard/admin/createuser">new User</a>
+  <h1 class="text-center mb-3">Fields List</h1>
+  <a class="btn btn-primary" href="/Dashboard/admin/createfield">new Field</a>
   <table class="table">
     <thead>
     <tr>
       <th>ID</th>
-      <th>User Name</th>
-      <th>Role</th>
+      <th>Field Name</th>
     </tr>
     </thead>
     <tbody class="table-group-divider">
-    <tr th:each="user : ${users}">
-      <td th:text="${user.id}"></td>
-      <td th:text="${user.username}"></td>
-      <td th:text="${user.role}"></td>
+    <tr th:each="field : ${fields}">
+      <td th:text="${field.id}"></td>
+      <td th:text="${field.name}"></td>
       <td style="white-space: nowrap">
-        <a class="btn btn-succes btn-sm"
-           th:href="@{/Dashboard/admin/edit(id=${user.id})}">
-          Edit
-        </a>
         <a class="btn btn-danger btn-sm"
-           th:href="@{/Dashboard/admin/delete(id=${user.id})}"
+           th:href="@{/Dashboard/admin/deletefield(id=${field.id})}"
            onclick="return confirm('Are you sure')">
           Delete
-        </a>
-        <a class="btn btn-info btn-sm"
-           th:if="${user.role == 'prof'}"
-           th:href="@{/Dashboard/admin/AddProf(id=${user.id})}">
-          Add Prof
         </a>
       </td>
 
