@@ -1,6 +1,7 @@
 package com.example.notemanagment.Controllers;
 
 import com.example.notemanagment.Models.*;
+import com.example.notemanagment.Models.Module;
 import com.example.notemanagment.Repository.FieldRepo;
 import com.example.notemanagment.Repository.ProfRepo;
 import com.example.notemanagment.Repository.UserRepo;
@@ -227,13 +228,93 @@ public class AdminController {
         model.addAttribute("users",users);
         return "Dashboard/admin/Managemodules";
     }
-    @GetMapping({"/createModule"})
-    public String createModule(Model model){
-        ModuleDto moduleDto = new ModuleDto();
 
-        model.addAttribute("moduleDto",moduleDto);
-        var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
-        model.addAttribute("fields",fields);
+
+    @GetMapping({"/createModule"})
+    public String createModule(Model model) {
+        ModuleDto moduleDto = new ModuleDto();
+        model.addAttribute("moduleDto", moduleDto);
+        var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        model.addAttribute("fields", fields);
         return "Dashboard/admin/createModule";
     }
+
+    @PostMapping("/createModule")
+    public String createModule(@Valid @ModelAttribute ModuleDto moduleDto, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+            model.addAttribute("fields", fields);
+            return "Dashboard/admin/createModule";
+        }
+
+        // Create Module object
+        Module module = new Module();
+        module.setName(moduleDto.getName());
+        module.setCode(moduleDto.getCode());
+        module.setSemester(moduleDto.getSemester());
+
+        // Extract and validate module elements
+        String[] elementNames = moduleDto.getElementNames();
+        Double[] elementCoefficients = moduleDto.getElementCoefficients();
+        String[] professorNames = moduleDto.getProfessorNames();
+
+        if (elementNames.length != elementCoefficients.length || elementNames.length != professorNames.length) {
+            result.addError(new FieldError("moduleDto", "elementNames", null, false,
+                    null, null, "Inconsistent number of elements provided"));
+            var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+            model.addAttribute("fields", fields);
+            return "Dashboard/admin/createModule";
+        }
+
+        for (int i = 0; i < elementNames.length; i++) {
+            if (elementNames[i].isEmpty() || professorNames[i].isEmpty()) {
+                result.addError(new FieldError("moduleDto", "elementNames", null, false,
+                        null, null, "Element name and professor name cannot be empty"));
+                var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+                model.addAttribute("fields", fields);
+                return "Dashboard/admin/createModule";
+            }
+
+            // Validate coefficient (optional, adjust as needed)
+            if (elementCoefficients[i] < 0 || elementCoefficients[i] > 1) {
+                result.addError(new FieldError("moduleDto", "elementCoefficients", null, false,
+                        null, null, "Coefficient must be between 0 and 1"));
+                var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+                model.addAttribute("fields", fields);
+                return "Dashboard/admin/createModule";
+            }
+        }
+
+        // Save module and associated elements
+        try {
+            module = userrepo.save(module); // Assuming UserRepo also saves Module entities
+            for (int i = 0; i < elementNames.length; i++) {
+                ModuleElement element = new ModuleElement();
+                element.setModule(module);
+                element.setName(elementNames[i]);
+                element.setCoefficient(elementCoefficients[i]);
+                // Find professor by name (implement logic to handle potential duplicates)
+                Professor professor = profRepo.findByNameAndSurname(professorNames[i]);
+                if (professor == null) {
+                    professor = new Professor();
+                    professor.setName(professorNames[i]); // Extract surname if available
+                    professor = profRepo.save(professor);
+                }
+                element.setProfessor(professor);
+                element = userrepo.save(element); // Assuming UserRepo also saves ModuleElement entities
+            }
+        } catch (Exception ex) {
+            // Handle potential exceptions (e.g., database errors)
+            result.addError(new FieldError("moduleDto", "general", null, false,
+                    null, null, "An error occurred while saving the module and elements."));
+            var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+            model.addAttribute("fields", fields);
+            return "Dashboard/admin/createModule";
+        }
+
+        return "redirect:/Dashboard/admin/Managemodules"; // Redirect to module management page
+    }
+
+    // ... other controller methods ...
+        }
 }

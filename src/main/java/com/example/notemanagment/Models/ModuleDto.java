@@ -52,4 +52,11 @@ public class ModuleDto {
     public void setSemester(String semester) {
         this.semester = semester;
     }
+
+    public List<Field> getFields() {
+        return List.of();
+    }
+
+    public void setFields(List<Field> fields) {
+    }
 }
