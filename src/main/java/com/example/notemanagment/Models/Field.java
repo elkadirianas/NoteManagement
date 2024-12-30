@@ -2,21 +2,27 @@ package com.example.notemanagment.Models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "fields")
 public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
 
-    public Long getId() {
+    @ManyToMany(mappedBy = "fields")
+    private List<Module> modules = new ArrayList<>(); // This is needed for the reverse mapping
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -28,5 +34,11 @@ public class Field {
         this.name = name;
     }
 
-    // Getters and setters
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
+    }
 }

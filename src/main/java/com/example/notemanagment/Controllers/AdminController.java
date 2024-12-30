@@ -1,7 +1,9 @@
 package com.example.notemanagment.Controllers;
 
 import com.example.notemanagment.Models.*;
+import com.example.notemanagment.Models.Module;
 import com.example.notemanagment.Repository.FieldRepo;
+import com.example.notemanagment.Repository.ModuleRepo;
 import com.example.notemanagment.Repository.ProfRepo;
 import com.example.notemanagment.Repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +15,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/Dashboard/admin")
@@ -25,6 +33,8 @@ public class AdminController {
     private ProfRepo profRepo;
     @Autowired
     private FieldRepo fieldRepo;
+    @Autowired
+    private ModuleRepo moduleRepo;
     @GetMapping({"","/"})
     public String showAdminDashboard(Model model) {
         int userId =  (int) session.getAttribute("userId");
@@ -219,14 +229,26 @@ public class AdminController {
         }
         return "redirect:/Dashboard/admin/Managefields";
     }
-    @GetMapping({"/Managemodules"})
-    public String ShowModules(Model model) {
-//        int userId =  (int) session.getAttribute("userId");
-//        model.addAttribute("userId", userId);
-        var users = userrepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
-        model.addAttribute("users",users);
-        return "Dashboard/admin/Managemodules";
+    @GetMapping("/Managemodules")
+    public String showModules(Model model) {
+        List<Module> modules = moduleRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        List<Map<String, Object>> moduleFieldCombinations = new ArrayList<>();
+
+        for (Module module : modules) {
+            for (Field field : module.getFields()) {
+                Map<String, Object> entry = new HashMap<>();
+                entry.put("module", module);
+                entry.put("field", field);
+                moduleFieldCombinations.add(entry);
+            }
+        }
+
+        model.addAttribute("moduleFieldCombinations", moduleFieldCombinations);
+        return "Dashboard/admin/ManageModules";
     }
+
+
+
     @GetMapping({"/createModule"})
     public String createModule(Model model){
         ModuleDto moduleDto = new ModuleDto();
@@ -236,4 +258,89 @@ public class AdminController {
         model.addAttribute("fields",fields);
         return "Dashboard/admin/createModule";
     }
+    // Delete Module from Field
+    @GetMapping("/deleteModuleField")
+    public String deleteModuleField(@RequestParam Long moduleId, @RequestParam int fieldId) {
+        Module module = moduleRepo.findById(Math.toIntExact(moduleId)).orElse(null);
+        Field field = fieldRepo.findById(fieldId).orElse(null);
+
+        if (module != null && field != null) {
+            // Remove the field from the module's fields list
+            module.getFields().remove(field);
+
+            // Save the updated module (this will update the join table automatically)
+            moduleRepo.save(module);
+
+            // Optionally, delete the field from the database if it's no longer associated with any module
+            if (field.getModules().isEmpty()) {
+                fieldRepo.delete(field);
+            }
+        }
+
+        return "redirect:/Dashboard/admin/Managemodules";
+    }
+
+    // Delete Module entirely if it has only one associated field
+    @GetMapping("/deleteModule")
+    public String deleteModule(@RequestParam int id) {
+        Module module = moduleRepo.findById(id).orElse(null);
+        if (module != null && module.getFields().isEmpty()) {
+            // If module is not associated with any fields, delete it
+            moduleRepo.delete(module);
+        } else {
+            // If the module is associated with multiple fields, remove the module-field relationship
+            for (Field field : module.getFields()) {
+                field.getModules().remove(module);
+            }
+
+            // Save the module to update the join table
+            moduleRepo.save(module);
+
+            // Delete the module if it's no longer needed
+            moduleRepo.delete(module);
+        }
+
+        return "redirect:/Dashboard/admin/Managemodules";
+    }
+
+
+    @PostMapping("/createModule")
+    public String saveModule(
+            @ModelAttribute("moduleDto") ModuleDto moduleDto,
+            BindingResult result,
+            RedirectAttributes redirectAttributes,
+            Model model
+    ) {
+        // Validate the semester input
+        try {
+            Module.Semester selectedSemester = Module.Semester.valueOf(moduleDto.getSemester());
+        } catch (IllegalArgumentException e) {
+            result.rejectValue("semester", "Invalid.semester", "Invalid semester selected.");
+            model.addAttribute("fields", fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id")));
+            return "Dashboard/admin/createModule";
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("fields", fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id")));
+            return "Dashboard/admin/createModule";
+        }
+
+        // Map DTO to Module entity
+        Module module = new Module();
+        module.setName(moduleDto.getName());
+        module.setCode(moduleDto.getCode());
+        module.setSemester(Module.Semester.valueOf(moduleDto.getSemester()));
+
+        // Fetch and set fields
+        List<Field> selectedFields = fieldRepo.findAllById(moduleDto.getFieldIds());
+        module.setFields(selectedFields);
+
+        // Save the module
+        moduleRepo.save(module);
+
+        // Add success message
+        redirectAttributes.addFlashAttribute("successMessage", "Module created successfully!");
+        return "redirect:/Dashboard/admin/Managefields";
+    }
+
 }

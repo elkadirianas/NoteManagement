@@ -58,6 +58,23 @@
                     </div>
                 </div>
                 <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label">Select Semester</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" th:field="${moduleDto.semester}">
+                            <option value="S1">S1</option>
+                            <option value="S2">S2</option>
+                            <option value="S3">S3</option>
+                            <option value="S4">S4</option>
+                            <option value="S5">S5</option>
+                            <option value="S6">S6</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('semester')}"
+                           th:errorclass="text-danger"
+                           th:errors="${moduleDto.semester}"></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
                     <div class="row">
                         <div class="offset-sm-4 col-sm-4 d-grid">
                             <button type="submit" class="btn btn-primary">Submit</button>
