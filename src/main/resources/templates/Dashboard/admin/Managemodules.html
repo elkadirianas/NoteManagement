@@ -8,6 +8,47 @@
 </head>
 <body>
 <div class="container my-3">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Dashboard/admin">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Dashboard/admin/ManageProfs">Professors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Dashboard/admin/Managefields">Fields</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Dashboard/admin/Managemodules">Modules</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+</div>
+<div class="container my-3">
     <h1 class="text-center mb-3">Modules List</h1>
     <a class="btn btn-primary mb-3" href="/Dashboard/admin/createModule">New Module</a>
     <table class="table">
@@ -27,29 +68,25 @@
             <td th:text="${entry.module.name}"></td>
             <td th:text="${entry.module.code}"></td>
             <td th:text="${entry.module.semester}"></td>
-            <td th:text="${entry.field.name}"></td>
+
+            <!-- If the module has no associated fields, display a blank in the Field column -->
+            <td th:text="${entry.field != null ? entry.field.name : ''}"></td>
+
             <td>
                 <!-- Button to delete the module-field relationship -->
                 <a class="btn btn-warning btn-sm"
-                   th:href="@{/Dashboard/admin/deleteModuleField(moduleId=${entry.module.id}, fieldId=${entry.field.id})}"
+                   th:href="@{/Dashboard/admin/deleteModuleField(moduleId=${entry.module.id}, fieldId=${entry.field != null ? entry.field.id : ''})}"
+                   th:if="${entry.field != null}"
                    onclick="return confirm('Are you sure you want to delete this module from the field?');">
                     Remove from Field
                 </a>
 
                 <!-- Button to delete the module entirely if it has only one associated field -->
                 <a class="btn btn-danger btn-sm"
-                   th:if="${#lists.size(entry.module.fields) == 1}"
-                   th:href="@{/Dashboard/admin/deleteModule(id=${entry.module.id})}"
+                   th:if="${entry.field == null || #lists.size(entry.module.fields) == 1}"
+                   th:href="@{/Dashboard/admin/deleteModuleField(moduleId=${entry.module.id}, fieldId=${entry.field != null ? entry.field.id : ''})}"
                    onclick="return confirm('This will delete the module entirely. Are you sure?');">
                     Delete Module
-                </a>
-
-                <!-- Button to delete the row from module_field but not the module itself if it has more than one field -->
-                <a class="btn btn-danger btn-sm"
-                   th:if="${#lists.size(entry.module.fields) > 1}"
-                   th:href="@{/Dashboard/admin/deleteModuleField(moduleId=${entry.module.id}, fieldId=${entry.field.id})}"
-                   onclick="return confirm('This will remove the module-field association. Are you sure?');">
-                    Delete Association
                 </a>
             </td>
         </tr>

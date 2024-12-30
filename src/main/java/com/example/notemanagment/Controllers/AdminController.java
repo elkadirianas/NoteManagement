@@ -230,21 +230,22 @@ public class AdminController {
         return "redirect:/Dashboard/admin/Managefields";
     }
     @GetMapping("/Managemodules")
-    public String showModules(Model model) {
-        List<Module> modules = moduleRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        List<Map<String, Object>> moduleFieldCombinations = new ArrayList<>();
+    public String manageModules(Model model) {
+        List<Module> modules = moduleRepo.findAll();
+        List<ModuleFieldCombination> moduleFieldCombinations = new ArrayList<>();
 
         for (Module module : modules) {
-            for (Field field : module.getFields()) {
-                Map<String, Object> entry = new HashMap<>();
-                entry.put("module", module);
-                entry.put("field", field);
-                moduleFieldCombinations.add(entry);
+            if (module.getFields().isEmpty()) {
+                moduleFieldCombinations.add(new ModuleFieldCombination(module, null));  // No fields associated
+            } else {
+                for (Field field : module.getFields()) {
+                    moduleFieldCombinations.add(new ModuleFieldCombination(module, field));
+                }
             }
         }
 
         model.addAttribute("moduleFieldCombinations", moduleFieldCombinations);
-        return "Dashboard/admin/ManageModules";
+        return "Dashboard/admin/ManageModules";  // Thymeleaf template name
     }
 
 
@@ -259,26 +260,33 @@ public class AdminController {
         return "Dashboard/admin/createModule";
     }
     // Delete Module from Field
+
     @GetMapping("/deleteModuleField")
-    public String deleteModuleField(@RequestParam Long moduleId, @RequestParam int fieldId) {
+    public String deleteModuleField(@RequestParam Long moduleId, @RequestParam(required = false) Integer fieldId) {
         Module module = moduleRepo.findById(Math.toIntExact(moduleId)).orElse(null);
-        Field field = fieldRepo.findById(fieldId).orElse(null);
 
-        if (module != null && field != null) {
-            // Remove the field from the module's fields list
-            module.getFields().remove(field);
+        if (module != null) {
+            if (fieldId != null) {
+                // If fieldId is provided, remove the field from the module's fields list
+                Field field = fieldRepo.findById(fieldId).orElse(null);
+                if (field != null) {
+                    module.getFields().remove(field);
+                }
+            }
 
-            // Save the updated module (this will update the join table automatically)
-            moduleRepo.save(module);
-
-            // Optionally, delete the field from the database if it's no longer associated with any module
-            if (field.getModules().isEmpty()) {
-                fieldRepo.delete(field);
+            // Check if the module has any fields left
+            if (module.getFields().isEmpty()) {
+                // If no fields are associated, delete the module entirely
+                moduleRepo.delete(module);
+            } else {
+                // Save the updated module (with field removed)
+                moduleRepo.save(module);
             }
         }
 
         return "redirect:/Dashboard/admin/Managemodules";
     }
+
 
     // Delete Module entirely if it has only one associated field
     @GetMapping("/deleteModule")
@@ -340,7 +348,7 @@ public class AdminController {
 
         // Add success message
         redirectAttributes.addFlashAttribute("successMessage", "Module created successfully!");
-        return "redirect:/Dashboard/admin/Managefields";
+        return "redirect:/Dashboard/admin/Managemodules";
     }
 
 }
