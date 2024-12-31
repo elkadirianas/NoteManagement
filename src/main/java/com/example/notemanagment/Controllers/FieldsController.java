@@ -2,9 +2,11 @@ package com.example.notemanagment.Controllers;
 
 import com.example.notemanagment.Models.Field;
 import com.example.notemanagment.Models.FieldDto;
+import com.example.notemanagment.Models.Module;
 import com.example.notemanagment.Repository.FieldRepo;
 import com.example.notemanagment.Repository.UserRepo;
 import com.example.notemanagment.Services.FieldService;
+import com.example.notemanagment.Services.ModuleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -70,4 +72,22 @@ public class FieldsController {
         model.addAttribute("modules", field.getModules());
         return "Dashboard/admin/fieldModules"; // Create this view
     }
+    @GetMapping("/addModuleToField/{fieldId}")
+    public String addModuleToFieldForm(@PathVariable Integer fieldId, Model model) {
+        Field field = fieldService.findById(fieldId);
+        Module module = new Module();
+        model.addAttribute("field", field);
+        model.addAttribute("module", module);
+        return "/Dashboard/admin/addModuleToField"; // Create this view
+    }
+
+    @PostMapping("/addModuleToField/{fieldId}")
+    public String addModuleToField(@PathVariable Integer fieldId, @ModelAttribute Module module) {
+        Field field = fieldService.findById(fieldId);
+        ModuleService moduleService = new ModuleService();
+        module.getFields().add(field);
+        moduleService.save(module); // Save the module with the associated field
+        return "redirect:/Dashboard/admin/fieldModules/" + fieldId;
+    }
+
 }
