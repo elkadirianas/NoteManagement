@@ -1,7 +1,6 @@
 package com.example.notemanagment.Models;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +17,24 @@ public class Module {
     @Column(unique = true, nullable = false)
     private String code;
 
-    @ManyToMany
-    @JoinTable(
-            name = "module_field",
-            joinColumns = @JoinColumn(name = "module_id"),
-            inverseJoinColumns = @JoinColumn(name = "field_id")
-    )
-    private List<Field> fields= new ArrayList<>();;
+    @ManyToOne
+    @JoinColumn(name = "field_id", nullable = false)
+    private Field field;
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ModuleElement> moduleElements = new ArrayList<>();
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Semester semester;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -46,6 +52,22 @@ public class Module {
         this.code = code;
     }
 
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
+    public List<ModuleElement> getModuleElements() {
+        return moduleElements;
+    }
+
+    public void setModuleElements(List<ModuleElement> moduleElements) {
+        this.moduleElements = moduleElements;
+    }
+
     public Semester getSemester() {
         return semester;
     }
@@ -54,26 +76,7 @@ public class Module {
         this.semester = semester;
     }
 
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    public void setFields(List<Field> fields) {
-        this.fields = fields != null ? fields : new ArrayList<>();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
     public enum Semester {
         S1, S2, S3, S4, S5
     }
-
-    // Getters and setters
 }

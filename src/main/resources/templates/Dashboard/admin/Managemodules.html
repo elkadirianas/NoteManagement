@@ -46,7 +46,6 @@
             </div>
         </div>
     </nav>
-
 </div>
 <div class="container my-3">
     <h1 class="text-center mb-3">Modules List</h1>
@@ -63,30 +62,17 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="entry : ${moduleFieldCombinations}">
-            <td th:text="${entry.module.id}"></td>
-            <td th:text="${entry.module.name}"></td>
-            <td th:text="${entry.module.code}"></td>
-            <td th:text="${entry.module.semester}"></td>
-
-            <!-- If the module has no associated fields, display a blank in the Field column -->
-            <td th:text="${entry.field != null ? entry.field.name : ''}"></td>
-
+        <tr th:each="module : ${modules}">
+            <td th:text="${module.id}"></td>
+            <td th:text="${module.name}"></td>
+            <td th:text="${module.code}"></td>
+            <td th:text="${module.semester}"></td>
+            <td th:text="${module.field != null ? module.field.name : 'None'}"></td>
             <td>
-                <!-- Button to delete the module-field relationship -->
-                <a class="btn btn-warning btn-sm"
-                   th:href="@{/Dashboard/admin/deleteModuleField(moduleId=${entry.module.id}, fieldId=${entry.field != null ? entry.field.id : ''})}"
-                   th:if="${entry.field != null}"
-                   onclick="return confirm('Are you sure you want to delete this module from the field?');">
-                    Remove from Field
-                </a>
-
-                <!-- Button to delete the module entirely if it has only one associated field -->
                 <a class="btn btn-danger btn-sm"
-                   th:if="${entry.field == null || #lists.size(entry.module.fields) == 1}"
-                   th:href="@{/Dashboard/admin/deleteModuleField(moduleId=${entry.module.id}, fieldId=${entry.field != null ? entry.field.id : ''})}"
-                   onclick="return confirm('This will delete the module entirely. Are you sure?');">
-                    Delete Module
+                   th:href="@{/Dashboard/admin/deleteModule(id=${module.id})}"
+                   onclick="return confirm('Are you sure you want to delete this module?');">
+                    Delete
                 </a>
             </td>
         </tr>

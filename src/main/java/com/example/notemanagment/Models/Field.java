@@ -1,7 +1,6 @@
 package com.example.notemanagment.Models;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +14,8 @@ public class Field {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "fields")
-    private List<Module> modules = new ArrayList<>(); // This is needed for the reverse mapping
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Module> modules = new ArrayList<>();
 
     public Integer getId() {
         return id;

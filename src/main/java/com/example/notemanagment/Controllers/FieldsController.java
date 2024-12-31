@@ -43,7 +43,7 @@ public class FieldsController {
         return "Dashboard/admin/createfield";
     }
     @PostMapping("/createfield")
-    public String createClient(@Valid @ModelAttribute FieldDto fieldDto, BindingResult result){
+    public String createField(@Valid @ModelAttribute FieldDto fieldDto, BindingResult result){
         if(userrepo.findByUsername(fieldDto.getName())!=null){
             result.addError(
                     new FieldError("fieldDto","name",fieldDto.getName(),false,null,null,"name is already used ")
@@ -72,22 +72,6 @@ public class FieldsController {
         model.addAttribute("modules", field.getModules());
         return "Dashboard/admin/fieldModules"; // Create this view
     }
-    @GetMapping("/addModuleToField/{fieldId}")
-    public String addModuleToFieldForm(@PathVariable Integer fieldId, Model model) {
-        Field field = fieldService.findById(fieldId);
-        Module module = new Module();
-        model.addAttribute("field", field);
-        model.addAttribute("module", module);
-        return "/Dashboard/admin/addModuleToField"; // Create this view
-    }
 
-    @PostMapping("/addModuleToField/{fieldId}")
-    public String addModuleToField(@PathVariable Integer fieldId, @ModelAttribute Module module) {
-        Field field = fieldService.findById(fieldId);
-        ModuleService moduleService = new ModuleService();
-        module.getFields().add(field);
-        moduleService.save(module); // Save the module with the associated field
-        return "redirect:/Dashboard/admin/fieldModules/" + fieldId;
-    }
 
 }

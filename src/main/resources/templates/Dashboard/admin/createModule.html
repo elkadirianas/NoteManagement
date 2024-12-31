@@ -38,26 +38,18 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label class="col-sm-4 col-form-label">Select Fields</label>
+                    <label class="col-sm-4 col-form-label">Select Field</label>
                     <div class="col-sm-8">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" id="fieldDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Fields
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="fieldDropdown">
-                                <li th:each="field : ${fields}">
-                                    <label class="dropdown-item">
-                                        <input type="checkbox" th:field="${moduleDto.fieldIds}" th:value="${field.id}">
-                                        <span th:text="${field.name}"></span>
-                                    </label>
-                                </li>
-                            </ul>
-                        </div>
-                        <p th:if="${#fields.hasErrors('fieldIds')}"
+                        <select class="form-control" th:field="${moduleDto.fieldId}">
+                            <option value="" disabled selected>Select a field</option>
+                            <option th:each="field : ${fields}" th:value="${field.id}" th:text="${field.name}"></option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('fieldId')}"
                            th:errorclass="text-danger"
-                           th:errors="${moduleDto.fieldIds}"></p>
+                           th:errors="${moduleDto.fieldId}"></p>
                     </div>
                 </div>
+
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Select Semester</label>
                     <div class="col-sm-8">
