@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.FieldError;
 @Controller
 @RequestMapping("/Login")
-public class Users_Controller {
+public class Login_Controller {
     @Autowired
     private UserRepo userRepo;
     @GetMapping({""})
