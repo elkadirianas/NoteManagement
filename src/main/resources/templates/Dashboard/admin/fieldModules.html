@@ -9,11 +9,11 @@
 <body>
 <div class="container my-3">
   <h1 class="text-center mb-3">Modules in Field: <span th:text="${field.name}"></span></h1>
-  <a class="btn btn-primary" th:href="@{/Dashboard/admin/createModule/{fieldId}(fieldId=${field.id})}">
+  <a class="btn btn-primary mb-3" th:href="@{/Dashboard/admin/createModule/{fieldId}(fieldId=${field.id})}">
     Add Module
   </a>
+  <a class="btn btn-primary mb-3" href="/Dashboard/admin/Managefields">Back to Fields</a>
 
-  <a class="btn btn-primary" href="/Dashboard/admin/Managefields">Back to Fields</a>
   <table class="table">
     <thead>
     <tr>
@@ -21,6 +21,7 @@
       <th>Module Name</th>
       <th>Code</th>
       <th>Semester</th>
+      <th>Actions</th> <!-- New column for actions -->
     </tr>
     </thead>
     <tbody>
@@ -29,6 +30,16 @@
       <td th:text="${module.name}"></td>
       <td th:text="${module.code}"></td>
       <td th:text="${module.semester}"></td>
+      <td>
+        <a class="btn btn-secondary mb-1"
+           th:href="@{/Dashboard/admin/ManageElements/{moduleId}(moduleId=${module.id})}">
+          Manage Elements
+        </a>
+        <a class="btn btn-info mb-1"
+           th:href="@{/Dashboard/admin/ShowElements/{moduleId}(moduleId=${module.id})}">
+          Show Elements
+        </a>
+      </td>
     </tr>
     </tbody>
   </table>

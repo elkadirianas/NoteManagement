@@ -122,7 +122,7 @@ public class FieldsController {
 
         // Add success message
         redirectAttributes.addFlashAttribute("successMessage", "Module created successfully!");
-        return "redirect:/Dashboard/admin/Managemodules";
+        return "redirect:/Dashboard/admin/Managefields";
     }
 
 
