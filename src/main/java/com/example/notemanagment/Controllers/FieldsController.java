@@ -4,6 +4,7 @@ import com.example.notemanagment.Models.Field;
 import com.example.notemanagment.Models.FieldDto;
 import com.example.notemanagment.Repository.FieldRepo;
 import com.example.notemanagment.Repository.UserRepo;
+import com.example.notemanagment.Services.FieldService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,9 @@ public class FieldsController {
     private FieldRepo fieldRepo;
     @Autowired
     private UserRepo userrepo ;
+    @Autowired
+    private FieldService fieldService;
+
     @GetMapping({"/Managefields"})
     public String ShowFiedls(Model model) {
 //        int userId =  (int) session.getAttribute("userId");
@@ -58,5 +62,12 @@ public class FieldsController {
             fieldRepo.delete(field);
         }
         return "redirect:/Dashboard/admin/Managefields";
+    }
+    @GetMapping("/fieldModules/{fieldId}")
+    public String getFieldModules(@PathVariable Integer fieldId, Model model) {
+        Field field = fieldService.findById(fieldId);
+        model.addAttribute("field", field);
+        model.addAttribute("modules", field.getModules());
+        return "Dashboard/admin/fieldModules"; // Create this view
     }
 }
