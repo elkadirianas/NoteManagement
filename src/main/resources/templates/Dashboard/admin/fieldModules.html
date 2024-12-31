@@ -9,7 +9,7 @@
 <body>
 <div class="container my-3">
   <h1 class="text-center mb-3">Modules in Field: <span th:text="${field.name}"></span></h1>
-  <a class="btn btn-primary" th:href="@{/Dashboard/admin/addModuleToField/{fieldId}(fieldId=${field.id})}">
+  <a class="btn btn-primary" th:href="@{/Dashboard/admin/createModule/{fieldId}(fieldId=${field.id})}">
     Add Module
   </a>
 
