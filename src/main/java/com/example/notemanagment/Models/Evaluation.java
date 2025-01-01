@@ -18,5 +18,29 @@ public class Evaluation {
     @Column(nullable = false)
     private Double coefficient;
 
+    public ModuleElement getModuleElement() {
+        return moduleElement;
+    }
+
+    public void setModuleElement(ModuleElement moduleElement) {
+        this.moduleElement = moduleElement;
+    }
+
+    public String getEvaluationMode() {
+        return evaluationMode;
+    }
+
+    public void setEvaluationMode(String evaluationMode) {
+        this.evaluationMode = evaluationMode;
+    }
+
+    public Double getCoefficient() {
+        return coefficient;
+    }
+
+    public void setCoefficient(Double coefficient) {
+        this.coefficient = coefficient;
+    }
+
     // Getters and setters
 }

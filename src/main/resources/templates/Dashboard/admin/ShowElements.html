@@ -41,13 +41,20 @@
             <td th:text="${element.name}"></td>
             <td th:text="${element.coefficient}"></td>
             <td th:text="${element.professor.name}"></td>
+<!--            <td>-->
+<!--                <ul>-->
+<!--                    <li th:each="evaluation : ${element.evaluations}">-->
+<!--                        <span th:text="${evaluation.evaluationMode}"></span>: <span th:text="${evaluation.coefficient * 100}"></span>%-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </td>-->
             <td>
-                <ul>
-                    <li th:each="evaluation : ${element.evaluations}">
-                        <span th:text="${evaluation.evaluationMode}"></span>: <span th:text="${evaluation.coefficient * 100}"></span>%
-                    </li>
-                </ul>
+                <a class="btn btn-info"
+                   th:href="@{/Dashboard/admin/elementEvaluations/{elementId}(elementId=${element.id})}">
+                    Show Evaluations
+                </a>
             </td>
+
         </tr>
         </tbody>
     </table>
