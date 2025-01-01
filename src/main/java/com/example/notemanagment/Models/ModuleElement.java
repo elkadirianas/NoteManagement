@@ -2,6 +2,8 @@ package com.example.notemanagment.Models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "module_elements")
 public class ModuleElement {
@@ -22,6 +24,10 @@ public class ModuleElement {
     @ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
     private Professor professor;
+
+    @OneToMany(mappedBy = "moduleElement", cascade = CascadeType.ALL)
+    private List<Evaluation> evaluations;
+
 
     public Long getId() {
         return id;
@@ -61,5 +67,13 @@ public class ModuleElement {
 
     public void setProfessor(Professor professor) {
         this.professor = professor;
+    }
+
+    public List<Evaluation> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<Evaluation> evaluations) {
+        this.evaluations = evaluations;
     }
 }
