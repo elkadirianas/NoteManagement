@@ -35,6 +35,11 @@
            th:href="@{/Dashboard/admin/ShowElements/{moduleId}(moduleId=${module.id})}">
           Show Elements
         </a>
+        <form th:action="@{/Dashboard/admin/deleteModule/{moduleId}(moduleId=${module.id})}" method="post" style="display: inline;">
+          <button type="submit" class="btn btn-danger mb-1" onclick="return confirm('Are you sure you want to delete this module?');">
+            Delete
+          </button>
+        </form>
       </td>
     </tr>
     </tbody>

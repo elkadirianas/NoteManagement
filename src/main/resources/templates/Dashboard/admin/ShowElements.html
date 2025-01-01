@@ -10,12 +10,21 @@
 <div class="container my-3">
     <h1 class="text-center mb-3">Elements in Module: <span th:text="${module.name}"></span></h1>
 
-    <!-- Add Element button -->
-    <a class="btn btn-primary mb-3"
-       th:href="@{/Dashboard/admin/createElement/{moduleId}(moduleId=${module.id})}">
-        Add Element
-    </a>
+    <!-- Buttons Section -->
+    <div class="mb-3">
+        <!-- Add Element button -->
+        <a class="btn btn-primary"
+           th:href="@{/Dashboard/admin/createElement/{moduleId}(moduleId=${module.id})}">
+            Add Element
+        </a>
+        <!-- Back to Modules in Field button -->
+        <a class="btn btn-secondary"
+           th:href="@{/Dashboard/admin/fieldModules/{fieldId}(fieldId=${module.field.id})}">
+            Back to Modules
+        </a>
+    </div>
 
+    <!-- Table of Elements -->
     <table class="table table-striped">
         <thead>
         <tr>

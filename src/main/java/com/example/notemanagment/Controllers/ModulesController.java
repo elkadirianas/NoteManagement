@@ -69,6 +69,14 @@ public class ModulesController {
         return "redirect:/Dashboard/admin/Managefields";
     }
 
+    @PostMapping("/deleteModule/{moduleId}")
+    public String deleteModule(@PathVariable Long moduleId) {
+        moduleRepo.deleteById(Math.toIntExact(moduleId));
+        return "redirect:/Dashboard/admin/Managefields";
+    }
+
+
+
 
 //    @GetMapping("/deleteModule")
 //    public String deleteModule(@RequestParam Long id) {
