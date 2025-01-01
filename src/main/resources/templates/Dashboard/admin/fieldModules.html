@@ -21,7 +21,7 @@
       <th>Module Name</th>
       <th>Code</th>
       <th>Semester</th>
-      <th>Actions</th> <!-- New column for actions -->
+      <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -31,10 +31,6 @@
       <td th:text="${module.code}"></td>
       <td th:text="${module.semester}"></td>
       <td>
-        <a class="btn btn-secondary mb-1"
-           th:href="@{/Dashboard/admin/createElement/{moduleId}(moduleId=${module.id})}">
-          Manage Elements
-        </a>
         <a class="btn btn-info mb-1"
            th:href="@{/Dashboard/admin/ShowElements/{moduleId}(moduleId=${module.id})}">
           Show Elements
