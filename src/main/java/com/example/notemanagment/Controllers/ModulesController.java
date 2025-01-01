@@ -22,50 +22,36 @@ public class ModulesController {
     private FieldRepo fieldRepo;
     @Autowired
     private ModuleRepo moduleRepo;
-
-    @GetMapping("/Managemodules")
-    public String manageModules(Model model) {
-        var modules = moduleRepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
-        model.addAttribute("modules", modules);
-        return "/Dashboard/admin/Managemodules";
-    }
-
-
-    @GetMapping("/createModule")
-    public String createModule(Model model) {
+    @GetMapping("/createModule/{fieldId}")
+    public String createModule(@PathVariable Integer fieldId, Model model) {
         ModuleDto moduleDto = new ModuleDto();
+        moduleDto.setFieldId(fieldId); // Pre-set the fieldId in the DTO
         model.addAttribute("moduleDto", moduleDto);
-
-        // Fetch all fields to populate the dropdown
-        var fields = fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        model.addAttribute("fields", fields);
 
         return "Dashboard/admin/createModule";
     }
 
-    @PostMapping("/createModule")
+    @PostMapping("/createModule/{fieldId}")
     public String saveModule(
+            @PathVariable Integer fieldId,
             @ModelAttribute("moduleDto") ModuleDto moduleDto,
             BindingResult result,
-            RedirectAttributes redirectAttributes,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
         // Validate semester
         try {
             Module.Semester selectedSemester = Module.Semester.valueOf(moduleDto.getSemester());
         } catch (IllegalArgumentException e) {
             result.rejectValue("semester", "Invalid.semester", "Invalid semester selected.");
-            model.addAttribute("fields", fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id")));
             return "Dashboard/admin/createModule";
         }
 
         if (result.hasErrors()) {
-            model.addAttribute("fields", fieldRepo.findAll(Sort.by(Sort.Direction.ASC, "id")));
             return "Dashboard/admin/createModule";
         }
 
-        // Fetch the selected field
-        Field selectedField = fieldRepo.findById(moduleDto.getFieldId())
+        // Fetch the field by fieldId
+        Field selectedField = fieldRepo.findById(fieldId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid field ID"));
 
         // Map DTO to Module entity
@@ -73,24 +59,25 @@ public class ModulesController {
         module.setName(moduleDto.getName());
         module.setCode(moduleDto.getCode());
         module.setSemester(Module.Semester.valueOf(moduleDto.getSemester()));
-        module.setField(selectedField); // Set the single field relationship
+        module.setField(selectedField); // Link the module to the field
 
         // Save the module
         moduleRepo.save(module);
 
         // Add success message
         redirectAttributes.addFlashAttribute("successMessage", "Module created successfully!");
-        return "redirect:/Dashboard/admin/Managemodules";
+        return "redirect:/Dashboard/admin/Managefields";
     }
 
-    @GetMapping("/deleteModule")
-    public String deleteModule(@RequestParam Long id) {
-        Module module = moduleRepo.findById(Math.toIntExact(id)).orElse(null);
 
-        if (module != null) {
-            moduleRepo.delete(module);
-        }
-
-        return "redirect:/Dashboard/admin/Managemodules";
-    }
+//    @GetMapping("/deleteModule")
+//    public String deleteModule(@RequestParam Long id) {
+//        Module module = moduleRepo.findById(Math.toIntExact(id)).orElse(null);
+//
+//        if (module != null) {
+//            moduleRepo.delete(module);
+//        }
+//
+//        return "redirect:/Dashboard/admin/Managemodules";
+//    }
 }
