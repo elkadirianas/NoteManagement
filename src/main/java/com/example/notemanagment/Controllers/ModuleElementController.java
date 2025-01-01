@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -137,6 +138,25 @@ public class ModuleElementController {
 
         // Redirect to the ShowAllElements page
         return "redirect:/Dashboard/admin/ShowAllElements";
+    }
+
+    @PostMapping("/deleteElement/{elementId}/{moduleId}")
+    public String deleteElement(
+            @PathVariable Long elementId,
+            @PathVariable Long moduleId,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            // Delete the element and cascade its evaluations
+            moduleElementRepository.deleteById(elementId);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Element and its evaluations deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error occurred while deleting the element.");
+        }
+
+        // Redirect to the module's elements page
+        return "redirect:/Dashboard/admin/ShowElements/" + moduleId;
     }
 
 }

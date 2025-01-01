@@ -33,6 +33,7 @@
             <th>Coefficient</th>
             <th>Professor</th>
             <th>Evaluations</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -41,18 +42,16 @@
             <td th:text="${element.name}"></td>
             <td th:text="${element.coefficient}"></td>
             <td th:text="${element.professor.name}"></td>
-<!--            <td>-->
-<!--                <ul>-->
-<!--                    <li th:each="evaluation : ${element.evaluations}">-->
-<!--                        <span th:text="${evaluation.evaluationMode}"></span>: <span th:text="${evaluation.coefficient * 100}"></span>%-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </td>-->
             <td>
                 <a class="btn btn-info"
                    th:href="@{/Dashboard/admin/elementEvaluations/{elementId}(elementId=${element.id})}">
                     Show Evaluations
                 </a>
+            </td>
+            <td>
+                <form th:action="@{/Dashboard/admin/deleteElement/{elementId}/{moduleId}(elementId=${element.id}, moduleId=${module.id})}" method="post">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
             </td>
 
         </tr>
