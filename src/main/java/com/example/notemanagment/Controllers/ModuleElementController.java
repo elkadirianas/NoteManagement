@@ -84,4 +84,59 @@ public class ModuleElementController {
         // Redirect to the ShowElements page for the module
         return "redirect:/Dashboard/admin/ShowElements/" + moduleId;
     }
+    @GetMapping("/ShowAllElements")
+    public String showAllElements(Model model) {
+        // Fetch all module elements
+        List<ModuleElement> allElements = moduleElementRepository.findAll();
+
+        // Pass the data to the view
+        model.addAttribute("elements", allElements);
+
+        return "Dashboard/admin/showAllElements"; // The new HTML file
+    }
+    @GetMapping("/createSharedElement")
+    public String showCreateSharedElementForm(Model model) {
+        // Fetch all modules and professors
+        List<Module> modules = moduleRepository.findAll();
+        List<Professor> professors = professorRepository.findAll();
+
+        // Pass data to the view
+        model.addAttribute("modules", modules);
+        model.addAttribute("professors", professors);
+
+        return "Dashboard/admin/createSharedElement"; // New HTML file
+    }
+    @PostMapping("/createSharedElement")
+    public String createSharedElement(
+            @RequestParam String name,
+            @RequestParam Double coefficient,
+            @RequestParam Long professorId,
+            @RequestParam List<Long> moduleIds) {
+
+        // Find the professor by ID
+        Professor professor = professorRepository.findById(Math.toIntExact(professorId))
+                .orElseThrow(() -> new IllegalArgumentException("Invalid professor ID: " + professorId));
+
+        // Create a new ModuleElement and set common fields
+        ModuleElement sharedElement = new ModuleElement();
+        sharedElement.setName(name);
+        sharedElement.setCoefficient(coefficient);
+        sharedElement.setProfessor(professor);
+
+        // Save the shared element for each selected module
+        for (Long moduleId : moduleIds) {
+            Module module = moduleRepository.findById(Math.toIntExact(moduleId))
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid module ID: " + moduleId));
+            ModuleElement moduleElement = new ModuleElement();
+            moduleElement.setName(sharedElement.getName());
+            moduleElement.setCoefficient(sharedElement.getCoefficient());
+            moduleElement.setProfessor(sharedElement.getProfessor());
+            moduleElement.setModule(module);
+            moduleElementRepository.save(moduleElement);
+        }
+
+        // Redirect to the ShowAllElements page
+        return "redirect:/Dashboard/admin/ShowAllElements";
+    }
+
 }

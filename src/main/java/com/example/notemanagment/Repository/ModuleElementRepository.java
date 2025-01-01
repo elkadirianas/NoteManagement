@@ -8,4 +8,5 @@ import java.util.List;
 public interface ModuleElementRepository extends JpaRepository<ModuleElement, Long> {
 
     List<ModuleElement> findByModuleId(Long moduleId);
+    List<ModuleElement> findAll();
 }
