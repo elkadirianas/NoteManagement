@@ -69,23 +69,19 @@ public class ModulesController {
         return "redirect:/Dashboard/admin/Managefields";
     }
 
-    @PostMapping("/deleteModule/{moduleId}")
-    public String deleteModule(@PathVariable Long moduleId) {
+    @PostMapping("/deleteModule/{fieldId}/{moduleId}")
+    public String deleteModule(
+            @PathVariable Integer fieldId,
+            @PathVariable Long moduleId,
+            RedirectAttributes redirectAttributes) {
+        // Delete the module by its ID
         moduleRepo.deleteById(Math.toIntExact(moduleId));
-        return "redirect:/Dashboard/admin/Managefields";
+
+        // Add a success message
+        redirectAttributes.addFlashAttribute("successMessage", "Module deleted successfully!");
+
+        // Redirect to the fieldModules page for the specific field
+        return "redirect:/Dashboard/admin/fieldModules/" + fieldId;
     }
 
-
-
-
-//    @GetMapping("/deleteModule")
-//    public String deleteModule(@RequestParam Long id) {
-//        Module module = moduleRepo.findById(Math.toIntExact(id)).orElse(null);
-//
-//        if (module != null) {
-//            moduleRepo.delete(module);
-//        }
-//
-//        return "redirect:/Dashboard/admin/Managemodules";
-//    }
 }
