@@ -74,7 +74,21 @@
            th:href="@{/Dashboard/admin/fieldModules/{fieldId}(fieldId=${field.id})}">
           Show Modules
         </a>
+        <!-- Dropdown for semesters -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Show Students
+          </button>
+          <ul class="dropdown-menu">
+            <li th:each="semester : ${semesters}">
+              <a class="dropdown-item"
+                 th:href="@{/Dashboard/admin/fieldStudents/{fieldId}/{semesterId}(fieldId=${field.id}, semesterId=${semester.id})}"
+                 th:text="${semester.name}"></a>
+            </li>
+          </ul>
+        </div>
       </td>
+
     </tr>
     </tbody>
 
