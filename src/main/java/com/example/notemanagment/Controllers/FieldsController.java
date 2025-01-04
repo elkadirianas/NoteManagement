@@ -4,10 +4,7 @@ import com.example.notemanagment.Models.Field;
 import com.example.notemanagment.Models.FieldDto;
 import com.example.notemanagment.Models.Module;
 import com.example.notemanagment.Models.ModuleDto;
-import com.example.notemanagment.Repository.FieldRepo;
-import com.example.notemanagment.Repository.ModuleRepo;
-import com.example.notemanagment.Repository.SemesterRepo;
-import com.example.notemanagment.Repository.UserRepo;
+import com.example.notemanagment.Repository.*;
 import com.example.notemanagment.Services.FieldService;
 import com.example.notemanagment.Services.ModuleService;
 import jakarta.validation.Valid;
@@ -81,15 +78,7 @@ public class FieldsController {
         model.addAttribute("modules", field.getModules());
         return "Dashboard/admin/fieldModules"; // Create this view
     }
-    @GetMapping("/fieldStudents/{fieldId}/{semesterId}")
-    public String getFieldStudents(
-            @PathVariable Integer fieldId,
-            @PathVariable Long semesterId,
-            Model model) {
-        // Add any necessary logic here to fetch data based on fieldId and semesterId
-        model.addAttribute("fieldId", fieldId);
-        model.addAttribute("semesterId", semesterId);
-        return "Dashboard/admin/fieldStudents"; // Create this view later
-    }
+
+
 
 }
