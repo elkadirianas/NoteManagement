@@ -1,16 +1,23 @@
 package com.example.notemanagment.Models;
 
-
-import java.util.List;
-
 public class ModuleDto {
     private Long id;
     private String name;
     private String code;
-    private String semester;
+    private Long semesterId; // Updated to reference Semester by its ID
     private Integer fieldId;
 
     // Constructors
+    public ModuleDto() {
+    }
+
+    public ModuleDto(Long id, String name, String code, Long semesterId, Integer fieldId) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+        this.semesterId = semesterId;
+        this.fieldId = fieldId;
+    }
 
     // Getters and setters
     public Long getId() {
@@ -37,14 +44,12 @@ public class ModuleDto {
         this.code = code;
     }
 
-
-
-    public String getSemester() {
-        return semester;
+    public Long getSemesterId() {
+        return semesterId;
     }
 
-    public void setSemester(String semester) {
-        this.semester = semester;
+    public void setSemesterId(Long semesterId) {
+        this.semesterId = semesterId;
     }
 
     public Integer getFieldId() {

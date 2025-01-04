@@ -1,6 +1,7 @@
 package com.example.notemanagment.Models;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "evaluations")
@@ -12,11 +13,23 @@ public class Evaluation {
     @ManyToOne
     @JoinColumn(name = "module_element_id", nullable = false)
     private ModuleElement moduleElement;
+
     @Column(nullable = false)
     private String evaluationMode;
 
     @Column(nullable = false)
     private Double coefficient;
+
+    @OneToMany(mappedBy = "evaluation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Note> notes;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public ModuleElement getModuleElement() {
         return moduleElement;
@@ -42,5 +55,11 @@ public class Evaluation {
         this.coefficient = coefficient;
     }
 
-    // Getters and setters
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+    }
 }

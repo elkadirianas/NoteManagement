@@ -10,23 +10,45 @@ public class Note {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "evaluation_id", nullable = false)
-    private Evaluation evaluation;
-
-    @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @Column(nullable = false)
-    private Double note;
+    @ManyToOne
+    @JoinColumn(name = "evaluation_id", nullable = false)
+    private Evaluation evaluation;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private Double value;
 
-    public enum Status {
-        ABSENT, PRESENT
+    public Long getId() {
+        return id;
     }
 
-    // Getters and setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Evaluation getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(Evaluation evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public Double getValue() {
+        return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
+    }
 }

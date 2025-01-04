@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>New Module</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 <body>
 <div class="container my-3">
@@ -29,15 +29,13 @@
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Select Semester</label>
                     <div class="col-sm-8">
-                        <select class="form-control" th:field="*{semester}">
-                            <option value="S1">S1</option>
-                            <option value="S2">S2</option>
-                            <option value="S3">S3</option>
-                            <option value="S4">S4</option>
-                            <option value="S5">S5</option>
-                            <option value="S6">S6</option>
+                        <select class="form-control" th:field="*{semesterId}">
+                            <option value="" disabled selected>Select a semester</option>
+                            <option th:each="semester : ${semesters}"
+                                    th:value="${semester.id}"
+                                    th:text="${semester.name}"></option>
                         </select>
-                        <p th:if="${#fields.hasErrors('semester')}" class="text-danger" th:errors="*{semester}"></p>
+                        <p th:if="${#fields.hasErrors('semesterId')}" class="text-danger" th:errors="*{semesterId}"></p>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -54,6 +52,6 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>

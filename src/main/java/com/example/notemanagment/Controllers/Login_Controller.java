@@ -1,7 +1,9 @@
 package com.example.notemanagment.Controllers;
 
+import com.example.notemanagment.Models.Semester;
 import com.example.notemanagment.Models.User;
 import com.example.notemanagment.Models.UserDto;
+import com.example.notemanagment.Repository.SemesterRepo;
 import com.example.notemanagment.Repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -11,14 +13,21 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.FieldError;
+
+import java.util.Arrays;
+import java.util.List;
+
 @Controller
 @RequestMapping("/Login")
 public class Login_Controller {
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private SemesterRepo semesterRepo;
     @GetMapping({""})
     public String Login(Model model){
         UserDto userDto = new UserDto();
+        initializeSemesters();
         model.addAttribute("userDto",userDto);
         return "Login/index";
     }
@@ -50,4 +59,17 @@ public class Login_Controller {
             return "Login/index";
         }
     }
+    private void initializeSemesters() {
+        if (semesterRepo.count() == 0) { // Check if the semesters table is empty
+            List<Semester> defaultSemesters = Arrays.asList(
+                    new Semester(null, "S1"),
+                    new Semester(null, "S2"),
+                    new Semester(null, "S3"),
+                    new Semester(null, "S4"),
+                    new Semester(null, "S5")
+            );
+            semesterRepo.saveAll(defaultSemesters); // Save the default semesters
+        }
+    }
+
 }

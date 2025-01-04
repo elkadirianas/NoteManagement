@@ -21,12 +21,12 @@ public class Module {
     @JoinColumn(name = "field_id", nullable = false)
     private Field field;
 
+    @ManyToOne
+    @JoinColumn(name = "semester_id", nullable = false)
+    private Semester semester;
+
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ModuleElement> moduleElements = new ArrayList<>();
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Semester semester;
 
     public Long getId() {
         return id;
@@ -60,14 +60,6 @@ public class Module {
         this.field = field;
     }
 
-    public List<ModuleElement> getModuleElements() {
-        return moduleElements;
-    }
-
-    public void setModuleElements(List<ModuleElement> moduleElements) {
-        this.moduleElements = moduleElements;
-    }
-
     public Semester getSemester() {
         return semester;
     }
@@ -76,7 +68,11 @@ public class Module {
         this.semester = semester;
     }
 
-    public enum Semester {
-        S1, S2, S3, S4, S5
+    public List<ModuleElement> getModuleElements() {
+        return moduleElements;
+    }
+
+    public void setModuleElements(List<ModuleElement> moduleElements) {
+        this.moduleElements = moduleElements;
     }
 }
